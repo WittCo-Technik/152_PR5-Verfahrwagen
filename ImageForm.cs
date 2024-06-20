@@ -106,7 +106,10 @@ namespace EB_Erkennung
                     loadedImage.Save("processed_image.png"); // Speichert das verarbeitete Bild
                 }
 
-                using (var engine = new TesseractEngine(@"C:\Users\DritonRamadani\OneDrive - AWICO\Desktop\USB", "deu", EngineMode.Default))
+                // Verzeichnis des aktuellen Projekts ermitteln
+                string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+                using (var engine = new TesseractEngine(projectDirectory, "deu", EngineMode.Default))
                 {
                     engine.DefaultPageSegMode = PageSegMode.SparseText;
 
@@ -117,8 +120,6 @@ namespace EB_Erkennung
                             string recognizedText = page.GetText();
                             System.Windows.Forms.MessageBox.Show("Erkannter Text: " + recognizedText);
 
-                            // Ermittle den Pfad des Projektverzeichnisses
-                            string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
                             // Erstelle den Pfad für die Textdatei im selben Ordner
                             string textFilePath = Path.Combine(projectDirectory, "erkannter_text.txt");
 
