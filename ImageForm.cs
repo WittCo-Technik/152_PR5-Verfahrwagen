@@ -5,12 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Tesseract;
 using System.Windows;
-
 
 namespace EB_Erkennung
 {
@@ -106,10 +104,12 @@ namespace EB_Erkennung
                     loadedImage.Save("processed_image.png"); // Speichert das verarbeitete Bild
                 }
 
-                // Verzeichnis des aktuellen Projekts ermitteln
-                string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string workingDirectory = Environment.CurrentDirectory;
+                string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+                string tessdataDirectory = Path.Combine(projectDirectory, "tessdata");
+                string testDirectory = Path.Combine(projectDirectory, "Test_Data");
 
-                using (var engine = new TesseractEngine(projectDirectory, "deu", EngineMode.Default))
+                using (var engine = new TesseractEngine(tessdataDirectory, "deu", EngineMode.Default))
                 {
                     engine.DefaultPageSegMode = PageSegMode.SparseText;
 
@@ -121,11 +121,11 @@ namespace EB_Erkennung
                             System.Windows.Forms.MessageBox.Show("Erkannter Text: " + recognizedText);
 
                             // Erstelle den Pfad für die Textdatei im selben Ordner
-                            string textFilePath = Path.Combine(projectDirectory, "erkannter_text.txt");
+                            string textFilePath = Path.Combine(testDirectory, "erkannter_text.txt");
 
                             // Speichern des erkannten Textes in der Datei
                             File.WriteAllText(textFilePath, recognizedText);
-                            System.Windows.Forms.MessageBox.Show($"Erkannter Text wurde in '{textFilePath}' gespeichert.", "Text Gespeichert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            System.Windows.Forms.MessageBox.Show($"Erkannter Text wurde in Test_Data gespeichert.", "Text Gespeichert", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                             // Initialisierung von foundIBC mit null
                             IBC foundIBC = null;
